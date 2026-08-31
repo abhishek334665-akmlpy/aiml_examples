@@ -1,75 +1,157 @@
 # DNN vs CNN — MNIST Image Classification
 
-A hands-on TensorFlow/Keras experiment comparing a **fully connected DNN** and a **Convolutional Neural Network (CNN)** on the same MNIST image-classification task.
+A hands-on TensorFlow/Keras experiment comparing a fully connected Deep Neural Network (DNN) with a Convolutional Neural Network (CNN) on the MNIST handwritten-digit classification dataset.
 
-This notebook is designed as an interview-focused learning exercise for understanding the core CNN concepts rather than optimizing model accuracy.
+The project uses the same dataset and overall machine-learning workflow for both models to demonstrate how their architectures differ and why CNNs are particularly effective for image data.
 
 ## Objective
 
-Use the same image data and the same overall ML pipeline with two different architectures:
+Compare two neural-network architectures:
 
 ### Fully Connected DNN
 
 ```text
-Image → Flatten → Dense → Dense → Softmax
+Image
+  ↓
+Flatten
+  ↓
+Dense
+  ↓
+Dense
+  ↓
+Softmax
+  ↓
+Prediction
 ```
 
 ### CNN
 
 ```text
-Image → Conv2D → MaxPooling → Flatten → Dense → Softmax
+Image
+  ↓
+Conv2D
+  ↓
+MaxPooling
+  ↓
+Flatten
+  ↓
+Dense
+  ↓
+Softmax
+  ↓
+Prediction
 ```
 
-The experiment demonstrates why CNNs are better suited to image data.
+The experiment focuses on understanding the architectural differences rather than optimizing model performance.
 
-## What the notebook demonstrates
+## What This Project Demonstrates
 
-- MNIST image representation
-- Pixel normalization
-- Why a DNN flattens an image
-- Why CNNs preserve spatial structure
+- Loading the MNIST dataset
+- Image and pixel representation
+- Data normalization
+- Flattening image data for a DNN
+- Building a fully connected DNN with Keras
+- Building a CNN with Keras
 - `Conv2D`
-- convolution filters / kernels
+- convolution filters
 - feature maps
 - `MaxPooling2D`
 - `Flatten`
 - Dense layers
-- local connectivity
-- parameter sharing
-- parameter-count comparison
-- training the same task with DNN and CNN
-- comparing test accuracy
-- comparing predictions on the same images
-- visualizing learned CNN feature maps
-- Keras Functional API
+- Softmax classification
+- Local connectivity
+- Parameter sharing
+- Model parameter comparison
+- Training and evaluation
+- Comparing predictions from DNN and CNN
+- Visualizing CNN feature maps
+- Using the Keras Functional API
 
-## Key Learning
+## Dataset
 
-The overall ML pipeline does **not** fundamentally change:
+The project uses the **MNIST handwritten digit dataset** provided through TensorFlow/Keras.
+
+MNIST contains:
+
+- 60,000 training images
+- 10,000 test images
+- 10 digit classes: `0` through `9`
+- Image size: `28 × 28`
+- Grayscale images
+
+Each image contains pixel values ranging from 0 to 255 before normalization.
+
+## Data Preparation
+
+Pixel values are normalized to the range `[0, 1]`.
+
+The DNN uses images with shape:
 
 ```text
-Data
- ↓
-Preprocessing
- ↓
-Train/Test data
- ↓
-Build model
- ↓
-Compile
- ↓
-Train
- ↓
-Evaluate
- ↓
-Predict
+28 × 28
 ```
 
-The major difference is the **model architecture**.
+The CNN uses images with an explicit grayscale channel:
 
-### DNN
+```text
+28 × 28 × 1
+```
 
-The image is flattened early:
+The underlying image data remains the same.
+
+## DNN Architecture
+
+The fully connected DNN uses:
+
+```text
+Input: 28 × 28
+      ↓
+Flatten
+      ↓
+Dense(128, ReLU)
+      ↓
+Dense(10, Softmax)
+```
+
+The `Flatten` layer converts:
+
+```text
+28 × 28
+```
+
+into:
+
+```text
+784
+```
+
+The first Dense layer therefore receives all 784 pixel values.
+
+## CNN Architecture
+
+The CNN uses:
+
+```text
+Input: 28 × 28 × 1
+      ↓
+Conv2D(32, 3×3, ReLU)
+      ↓
+MaxPooling2D(2×2)
+      ↓
+Flatten
+      ↓
+Dense(128, ReLU)
+      ↓
+Dense(10, Softmax)
+```
+
+Unlike the DNN, the CNN does not flatten the image immediately.
+
+The convolution layer first extracts spatial features from local regions of the image.
+
+## DNN vs CNN
+
+### Fully Connected DNN
 
 ```text
 28 × 28
@@ -79,55 +161,155 @@ Flatten
 784 values
    ↓
 Dense
+   ↓
+Prediction
 ```
+
+The spatial arrangement of the pixels is not explicitly preserved once the image is flattened.
 
 ### CNN
 
-The image remains spatially structured while features are extracted:
-
 ```text
 28 × 28 × 1
-   ↓
-Conv2D
-   ↓
-Feature maps
-   ↓
-Max Pooling
-   ↓
-Flatten
-   ↓
-Dense
+     ↓
+  Conv2D
+     ↓
+Feature Maps
+     ↓
+ Max Pooling
+     ↓
+  Flatten
+     ↓
+   Dense
+     ↓
+ Prediction
 ```
 
-## Why CNN?
+The CNN preserves spatial structure while learning useful image features.
 
-Images contain spatial relationships. Nearby pixels are related, and useful patterns such as edges, curves and shapes can appear at different locations.
+## Why CNNs Work Well for Images
 
-CNNs exploit this using:
+CNNs take advantage of important properties of image data.
 
-1. **Local connectivity** — convolution filters examine small regions.
-2. **Parameter sharing** — the same learned filter is reused across the image.
-3. **Pooling** — reduces spatial dimensions while retaining important information.
+### 1. Local Connectivity
 
-## Repository Structure
+A convolution filter examines a small region of the image rather than connecting every neuron to every pixel.
+
+For example, a `3 × 3` filter examines a local 3 × 3 region.
+
+### 2. Parameter Sharing
+
+The same convolution filter is reused across different locations of the image.
+
+This allows the network to detect similar patterns wherever they occur.
+
+### 3. Feature Extraction
+
+Convolution layers can learn useful visual patterns.
+
+A simplified progression is:
 
 ```text
-dnn-vs-cnn-mnist/
-├── DNN_vs_CNN_MNIST.ipynb
-├── README.md
-└── requirements.txt
+Pixels
+  ↓
+Local patterns
+  ↓
+Feature maps
+  ↓
+Higher-level features
+  ↓
+Classification
 ```
 
-## Requirements
+### 4. Pooling
 
-- Python 3.x
-- TensorFlow 2.x
+Pooling reduces the spatial dimensions of feature maps while retaining important information.
+
+This helps reduce the amount of data passed to later layers.
+
+## Parameter Comparison
+
+The notebook compares the number of trainable parameters in the DNN and CNN.
+
+For the DNN, the first Dense layer receives:
+
+```text
+28 × 28 = 784
+```
+
+inputs.
+
+With 128 neurons:
+
+```text
+784 × 128 + 128
+```
+
+trainable parameters are required.
+
+The first CNN layer instead uses:
+
+```text
+3 × 3
+```
+
+filters shared across the image.
+
+For a grayscale image and 32 filters:
+
+```text
+3 × 3 × 1 × 32 + 32
+```
+
+parameters are required.
+
+This demonstrates the parameter-sharing principle used by CNNs.
+
+## Model Training
+
+Both models follow the same general machine-learning workflow:
+
+```text
+Load Data
+   ↓
+Preprocess Data
+   ↓
+Build Model
+   ↓
+Compile
+   ↓
+Train
+   ↓
+Evaluate
+   ↓
+Predict
+```
+
+The major difference is the **model architecture**.
+
+## Visualization
+
+The notebook visualizes:
+
+1. The original MNIST image
+2. The flattened representation used by the DNN
+3. CNN feature maps
+4. Predictions from both models
+
+The feature-map visualization provides a view of the intermediate representations produced by the convolution layer.
+
+## Technologies
+
+- Python
+- TensorFlow
+- Keras
 - NumPy
 - Matplotlib
+- Jupyter Notebook
 
-Tested conceptually with TensorFlow 2.21.0.
+## Installation
 
-Install:
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
@@ -135,36 +317,40 @@ pip install -r requirements.txt
 
 ## Running the Notebook
 
-Open the notebook in Jupyter Notebook, JupyterLab, or VS Code:
+Open the notebook using Jupyter or VS Code:
 
 ```bash
 jupyter notebook DNN_vs_CNN_MNIST.ipynb
 ```
 
-The first run downloads the MNIST dataset through Keras.
+Run the cells from top to bottom.
 
-## Important Notes
+The MNIST dataset will be downloaded automatically by TensorFlow/Keras when required.
 
-The notebook intentionally uses only a few epochs. The purpose is **architecture understanding**, not achieving state-of-the-art accuracy.
+## Repository Structure
 
-Exact accuracy and training time can vary depending on:
+```text
+dnn-vs-cnn-mnist/
+├── DNN_vs_CNN_MNIST.ipynb
+├── README.md
+├── requirements.txt
+└── .gitignore
+```
 
-- CPU/GPU
-- TensorFlow version
-- hardware
-- random initialization
-- runtime environment
+## Key Takeaway
 
-## Interview Takeaway
+The overall machine-learning workflow remains largely the same for DNN and CNN models.
 
-A strong concise answer to:
+The important difference is how the image is processed:
 
-**"What is the difference between a DNN and a CNN for image data?"**
+```text
+DNN:
+Image → Flatten → Dense → Prediction
 
-> A fully connected DNN typically flattens an image and processes the pixels through Dense layers. A CNN preserves spatial structure and uses local, shared convolutional filters to learn spatial features efficiently, often followed by pooling and Dense layers for classification.
+CNN:
+Image → Convolution → Pooling → Flatten → Dense → Prediction
+```
 
-## Course Context
+A fully connected DNN treats the image primarily as a vector of values after flattening.
 
-This project supports the **IITK E&ICT Academy AI/ML — Module 4: Core Machine Learning / Deep Learning with Keras and TensorFlow**, specifically the CNN portion.
-
-It is intentionally focused on **Pass 1 understanding and interview readiness**, not exhaustive mathematical derivation.
+A CNN preserves spatial structure and uses convolution filters, local connectivity, and parameter sharing to learn spatial features before classification.
