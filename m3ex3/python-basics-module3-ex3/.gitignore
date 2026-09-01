@@ -22,3 +22,8 @@ Thumbs.db
 .env.*
 *.pem
 *.key
+
+# External datasets
+data/*.data
+data/*.csv
+data/*.zip
